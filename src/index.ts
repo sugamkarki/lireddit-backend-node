@@ -1,3 +1,5 @@
+//   @ts-nocheck
+
 import express, { response } from "express";
 import cors from "cors";
 import mongoose from "mongoose";
@@ -24,6 +26,7 @@ express()
   .set("views", path.join(__dirname, "views"))
   .set("view engine", "ejs")
   .on("error", onError)
+  //   @ts-ignore
   .get("/", (req, res) => {
     res.render("index");
   })
