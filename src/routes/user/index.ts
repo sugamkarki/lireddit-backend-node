@@ -14,22 +14,22 @@ router.get("", (req, res) => {
 router.get("/:id", (req, res) => {});
 
 router.post("/login", (req, res, next) => {
+  const { user } = req.body;
   userSchema
-    .findOne({ email: req.body.email })
-    .then((user: any): any => {
+    .findOne({ email: user.email })
+    .then((_user: any): any => {
       if (!user) {
         return res.status(400).json({ message: "User Not Found" });
       }
-      argon2.verify(user.password, req.body.password).then((result): any => {
+      argon2.verify(_user.password, user.password).then((result): any => {
         if (!result) {
           return res.status(401).json({ message: "Invalid Authentication" });
         }
-        console.log(user.id);
-        const token = createToken("1h", { email: user.email, id: user.id });
+        const token = createToken("1h", { email: _user.email, id: _user.id });
         res.status(201).json({
           token,
           expiresIn: "3600",
-          id: user.id,
+          id: _user.id,
         });
       });
     })
@@ -38,14 +38,24 @@ router.post("/login", (req, res, next) => {
     });
 });
 router.post("/signup", async (req, res, next) => {
-  const user = new userSchema({
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
-    email: req.body.email,
-    password: await argon2.hash(req.body.password),
-    profile_picture: "",
-  });
-  user.save().then((_user) => {
-    res.status(201).json({ message: "User Created Successfully", user: _user });
+  userSchema.findOne({ email: req.body.email }).then((user: any): any => {
+    if (user) {
+      return res.status(400).json({ message: "Email already exists" });
+    }
+    const newUser = new userSchema({
+      email: req.body.email,
+      password: req.body.password,
+    });
+    // @ts-ignore
+    argon2.hash(newUser.password).then((hash) => {
+      // @ts-ignore
+      newUser.password = hash;
+      newUser.save().then((user) => {
+        res.status(201).json({
+          message: "User Created",
+          user,
+        });
+      });
+    });
   });
 });

@@ -11,7 +11,7 @@ connectToMongoose();
 express()
   .use(
     cors({
-      origin: process.env.CORS,
+      origin: process.env.CORS_DEV,
     })
   )
   .use(express.json())
