@@ -49,19 +49,3 @@ router.post("/signup", async (req, res, next) => {
     res.status(201).json({ message: "User Created Successfully", user: _user });
   });
 });
-
-// userSchema
-// .findOne({ email: req.body.email })
-// .then(async (user: any) => {
-//   // console.log(user);
-//   if (!user) {
-//     res.status(400).json({ message: "User Not Found" });
-
-//   argon2.verify(user.password, req.body.password).then((result): any => {
-//     if(!result){
-//         return res.status(401).json({ message: "Invalid Authentication" });
-//     }
-// const token=createToken("1h",{email:user.email,id:user.id})
-// console.log(token);
-//   });
-// }
