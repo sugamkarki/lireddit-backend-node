@@ -1,3 +1,5 @@
 import normalizePort from "./normalizePort";
 import onError from "./onError";
-export { normalizePort, onError };
+import connectToMongoose from "./mongoose";
+import { createToken } from "./jwt";
+export { normalizePort, onError, connectToMongoose, createToken };

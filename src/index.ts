@@ -1,25 +1,26 @@
-//   @ts-nocheck
-
-import express, { response } from "express";
+import express from "express";
 import cors from "cors";
-import mongoose from "mongoose";
 //
-import { onError, normalizePort } from "./helpers";
+import { onError, normalizePort, connectToMongoose } from "./helpers";
+import router from "./routes";
+//
 const path = require("path");
+require("dotenv-safe").config({});
 export const port = normalizePort(process.env.PORT || "3000");
-// const app = express();
+connectToMongoose();
 express()
-  .use(cors())
+  .use(
+    cors({
+      origin: process.env.CORS,
+    })
+  )
   .use(express.json())
   .use(express.static(path.join(__dirname, "public")))
   .use(express.urlencoded({ extended: false }))
   //   @ts-ignore
   .use(function (err, req, res, next) {
-    // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get("env") === "development" ? err : {};
-
-    // render the error page
     res.status(err.status || 500);
     res.render("error");
   })
@@ -30,6 +31,7 @@ express()
   .get("/", (req, res) => {
     res.render("index");
   })
+  .use("/api", router)
   .listen(port, () => {
     console.log("Server started on port: ", port);
   });
