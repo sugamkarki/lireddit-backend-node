@@ -28,7 +28,6 @@ express()
       origin: process.env.CORS_DEV,
     })
   )
-
   .use(express.static(path.join(__dirname, "public")))
   .use(express.json())
   .use(express.urlencoded({ extended: true }))
