@@ -60,13 +60,51 @@ router.post(
     });
   }
 );
-router.delete("/:id", (req, res) => {
+router.delete("/:id", checkAuth, (req, res) => {
   postSchema
-    // @ts-ignore
-    .findByIdAndDelete(req.params.id, (err, post) => {
-      res.status(201).json({ message: "deleted" });
+    .deleteOne(
+      // @ts-ignore
+      { _id: req.params.id, creator: req.userData.userId }
+    )
+    .then((result) => {
+      if (result.deletedCount > 0) {
+        res.status(200).json({ message: "Deleted" });
+      } else {
+        res.status(401).json({ message: "Not Authorized" });
+      }
     })
+    // @ts-ignore
     .catch((err) => {
       res.status(404).json({ message: "not found" });
+    });
+});
+router.get("/:id", (req, res) => {
+  console.log(req.params.id);
+  postSchema
+    // @ts-ignore
+    .findById(req.params.id, (err, post) => {
+      res.status(201).json({ message: "post fetched", post });
+    });
+});
+router.patch("/:id", checkAuth, (req, res) => {
+  // @ts-ignore
+  console.log(req.userData.userId);
+  postSchema
+    // @ts-ignore
+    .updateOne(
+      // @ts-ignore
+      { _id: req.params.id, creator: req.userData.userId },
+      {
+        title: req.body.title,
+        content: req.body.content,
+      }
+    )
+    .then((result) => {
+      console.log(result);
+      if (result.modifiedCount > 0) {
+        res.status(200).json({ message: "updated" });
+      } else {
+        res.status(401).json({ message: "Not Authorized" });
+      }
     });
 });
