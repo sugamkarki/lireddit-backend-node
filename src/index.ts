@@ -5,7 +5,9 @@ import { onError, normalizePort, connectToMongoose } from "./helpers";
 import router from "./routes";
 //
 const path = require("path");
-require("dotenv-safe").config({});
+require("dotenv-safe").config({
+  allowEmptyValues: true,
+});
 export const port = normalizePort(process.env.PORT || "3000");
 connectToMongoose();
 express()
