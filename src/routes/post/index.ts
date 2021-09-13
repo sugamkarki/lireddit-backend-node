@@ -9,18 +9,20 @@ router.get("", (req, res, next) => {
     res.json({ message: "posts fetched", posts });
   });
 });
+
 router.post("", (req, res, next) => {
-  const postFromRequest = req.body.post;
-  const post = new postSchema({
-    title: postFromRequest.title,
-    content: postFromRequest.content,
-    creator: postFromRequest.creator,
-  });
-  //   @ts-ignore
-  post.save().then((post, err): any => {
-    if (err) {
-      return res.json({ message: "Error", error: err });
-    }
-    res.json({ message: "Post created", post });
-  });
+  console.log(req);
 });
+//   const postFromRequest = req.body.formData;
+//   const post = new postSchema({
+//     title: postFromRequest.title,
+//     content: postFromRequest.content,
+//     creator: postFromRequest.creator,
+//   });
+//   //   @ts-ignore
+//   post.save().then((post, err): any => {
+//     if (err) {
+//       return res.json({ message: "Error", error: err });
+//     }
+//     res.json({ message: "Post created", post });
+//   });
