@@ -5,9 +5,21 @@ import { onError, normalizePort, connectToMongoose } from "./helpers";
 import router from "./routes";
 //
 const path = require("path");
-require("dotenv-safe").config({
-  allowEmptyValues: true,
-});
+// require("dotenv-safe").config({
+//   allowEmptyValues: true,
+// });
+const dotenv = require("dotenv");
+const result = dotenv.config();
+
+if (result.error) {
+  if (process.env.NODE_ENV === "production" && result.error.code === "ENOENT") {
+    console.info(
+      "expected this error because we are in production without a .env file"
+    );
+  } else {
+    throw result.error;
+  }
+}
 export const port = normalizePort(process.env.PORT || "3000");
 connectToMongoose();
 express()
