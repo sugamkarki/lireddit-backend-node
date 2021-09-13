@@ -25,10 +25,10 @@ router.post("/login", (req, res, next) => {
         if (!result) {
           return res.status(401).json({ message: "Invalid Password" });
         }
-        const token = createToken("1h", { email: _user.email, id: _user.id });
+        const token = createToken("1d", { email: _user.email, id: _user.id });
         res.status(201).json({
           token,
-          expiresIn: "3600",
+          expiresIn: "86400",
           id: _user.id,
         });
       });
@@ -54,7 +54,7 @@ router.post("/signup", async (req, res, next) => {
       // @ts-ignore
       newUser.password = hash;
       // @ts-ignore
-      const token = createToken("1h", { email: newUser.email, id: newUser.id });
+      const token = createToken("1d", { email: newUser.email, id: newUser.id });
       newUser.save().then((user) => {
         res.status(201).json({
           message: "User Created",
@@ -70,6 +70,7 @@ router.post("/signup", async (req, res, next) => {
           },
           token,
           id: newUser.id,
+          expiry: 86400,
         });
       });
     });
