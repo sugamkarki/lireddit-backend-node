@@ -1,4 +1,6 @@
+// @ts-nocheck
 import multer from "multer";
+
 const MIME_TYPE_MAP = {
   "image/png": "png",
   "image/jpeg": "jpg",
@@ -8,11 +10,11 @@ const MIME_TYPE_MAP = {
 export const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const isValid = MIME_TYPE_MAP[file.mimetype];
-    let error: Error | null = new Error("Invalid mime type");
+    let error = new Error("Invalid mime type");
     if (isValid) {
       error = null;
     }
-    cb(error, "backend/images");
+    cb(error, "src/public/images/post");
   },
   filename: (req, file, cb) => {
     const name = file.originalname.toLowerCase().split(" ").join("-");

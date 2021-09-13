@@ -28,9 +28,10 @@ express()
       origin: process.env.CORS_DEV,
     })
   )
-  .use(express.json())
+
   .use(express.static(path.join(__dirname, "public")))
-  .use(express.urlencoded({ extended: false }))
+  .use(express.json())
+  .use(express.urlencoded({ extended: true }))
   //   @ts-ignore
   .use(function (err, req, res, next) {
     res.locals.message = err.message;

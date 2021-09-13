@@ -1,2 +1,3 @@
 import { storage } from "./multer";
-export { storage };
+import jwtVerify from "./jwt_verify";
+export { storage, jwtVerify };
