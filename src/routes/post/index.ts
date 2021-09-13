@@ -1,43 +1,25 @@
 import express from "express";
 import multer from "multer";
-import { postSchema } from "../../models";
+import { postSchema, userSchema } from "../../models";
 import { storage } from "../../middlewares";
 import { jwtVerify as checkAuth } from "../../middlewares";
 export const router = express.Router();
-//
-// const MIME_TYPE_MAP = {
-//   "image/png": "png",
-//   "image/jpeg": "jpg",
-//   "image/jpg": "jpg",
-// };
-
-// export const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     const isValid = MIME_TYPE_MAP[file.mimetype];
-//     let error = new Error("Invalid mime type");
-//     console.log(file.mimetype);
-//     if (isValid) {
-//       // @ts-ignore
-//       error = null;
-//     }
-//     cb(error, "public/images");
-//   },
-//   filename: (req, file, cb) => {
-//     const name = file.originalname.toLowerCase().split(" ").join("-");
-//     const ext = MIME_TYPE_MAP[file.mimetype];
-//     console.log(name, ext);
-//     cb(null, name + "-" + Date.now() + "." + ext);
-//   },
-// });
-
-//
 router.get("", (req, res, next) => {
-  postSchema.find({}, (err, posts) => {
-    if (err) {
-      res.json({ message: "Erros", error: err });
-    }
-    res.json({ message: "posts fetched", posts });
-  });
+  postSchema
+    .find()
+    .sort({ createdAt: -1 })
+    .populate({
+      path: "creator",
+      select: ["first_name", "last_name", "email", "profile_picture"],
+    })
+    .exec((err, posts) => {
+      if (err) {
+        return res.status(400).json({
+          error: err,
+        });
+      }
+      return res.json({ message: "Posts fetched", posts });
+    });
 });
 
 router.post(
@@ -60,7 +42,31 @@ router.post(
       if (err) {
         return res.json({ message: "Error", error: err });
       }
-      res.json({ message: "Post created", post });
+      postSchema
+        .find()
+        .sort({ createdAt: -1 })
+        .populate({
+          path: "creator",
+          select: ["first_name", "last_name", "email", "profile_picture"],
+        })
+        .exec((err, posts) => {
+          if (err) {
+            return res.status(400).json({
+              error: err,
+            });
+          }
+          return res.json({ message: "Posts fetched", posts });
+        });
     });
   }
 );
+router.delete("/:id", (req, res) => {
+  postSchema
+    // @ts-ignore
+    .findByIdAndDelete(req.params.id, (err, post) => {
+      res.status(201).json({ message: "deleted" });
+    })
+    .catch((err) => {
+      res.status(404).json({ message: "not found" });
+    });
+});
